@@ -1,57 +1,60 @@
-// import { useEffect, useState } from 'react'
+/* eslint-disable camelcase */
+import { useEffect, useState } from 'react'
 import * as S from './ContainerStyler'
 
-// interface IGithub {
-//   name: string;
-//   // eslint-disable-next-line camelcase
-//   html_url: string;
-//   id: number | string;
-// }
-
-// async function getData () {
-//   const data = await fetch(
-//     'https://api.github.com/users/eletromaximus/repos'
-//   )
-//     .then((message) => message.json()
-//     )
-//     .catch((erro) => {
-//       throw new Error(erro)
-//     })
-
-//   if (data.length >= 2) {
-//     const info = data.map((repos: any) => {
-//       return {
-//         name: repos.name,
-//         html_url: repos.html_url,
-//         id: repos.id
-//       }
-//     })
-//     return info
-//   }
-// }
+interface IGithub {
+  name: string;
+  html_url: string;
+  id: number | string;
+}
 
 function App () {
-  // const [profile, setProfile] = useState<any[]>()
+  const [profile, setProfile] = useState<IGithub[]>()
 
-  // useEffect(() => {
-  //   const data = getData()
+  async function Data () {
+    const data = await fetch(
+      'https://api.github.com/users/eletromaximus/repos'
+    )
+      .then((message) => message.json()
+      )
+      .catch((erro) => {
+        throw new Error(erro)
+      })
 
-  //   if (data !== undefined) {
-  //     setProfile(data)
-  //   }
-  // })
+    if (data.length >= 2) {
+      const info: IGithub[] = await data.map((repos: any) => {
+        return {
+          name: repos.name,
+          html_url: repos.html_url,
+          id: repos.id
+        }
+      })
+      return setProfile(info)
+    } else {
+      return [{
+        id: 0,
+        name: '',
+        html_url: ''
+      }]
+    }
+  }
+
+  useEffect(() => {
+    Data()
+  })
+
   return (
     <S.Container>
       <S.Bio>
         <div id="profile">
           <ul>
-            {/* { profile && profile.map((reposistory: IGithub) => {
+            { profile && profile.map((reposistory: IGithub) => {
               return (
                 <li key={reposistory.id}>
                   {reposistory.name}
                 </li>
               )
-            })} */}
+            })}
           </ul>
         </div>
       </S.Bio>
