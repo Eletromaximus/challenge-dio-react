@@ -133,4 +133,4 @@ export default App
 
 O resultado será semelhante a este:
 
-![desafio](https://github.com/Eletromaximus/desafio-front-dio/blob/main/desafio.png)
+![desafio](https://github.com/Eletromaximus/challenge-dio-react/blob/main/desafio.png)
