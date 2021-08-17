@@ -1,6 +1,6 @@
 # Desfio profile do github proposto pela Digital Inovation One
 
-Utizando da Api Rest, foi realizado requisições com Api Fetch com o objetivo de:
+## Utizando da Api Rest, foi realizado requisições com Api Fetch com o objetivo de:
   * coletar informações do profile, por meior da url: https://api.github.com/users/eletromaximus;
   * Coletar dados genéricos de cada projeto, por meio da url: https://api.github.com/users/eletromaximus/repos;
 
@@ -131,6 +131,4 @@ function App () {
 export default App
 ~~~
 
-O resultado será semelhante a este:
-
-![desafio](https://github.com/Eletromaximus/challenge-dio-react/blob/main/desafio.png)
+O resultado será semelhante a este: ![desafio](https://github.com/Eletromaximus/challenge-dio-react/blob/main/public/desafio.png)
