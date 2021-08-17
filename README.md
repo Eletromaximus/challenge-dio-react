@@ -1,46 +1,136 @@
-# Getting Started with Create React App
+# Desfio profile do github proposto pela Digital Inovation One
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Utizando da Api Rest, foi realizado requisições com Api Fetch com o objetivo de:
+  * coletar informações do profile, por meior da url: https://api.github.com/users/eletromaximus;
+  * Coletar dados genéricos de cada projeto, por meio da url: https://api.github.com/users/eletromaximus/repos;
 
-## Available Scripts
+  Um Hook foi criado especificamente para este propósito:
 
-In the project directory, you can run:
+~~~ javascript 
+  /* eslint-disable camelcase */
+import { useEffect, useState } from 'react'
 
-### `yarn start`
+interface IProfile {
+  name: string,
+  url: string
+}
+export interface IGithub {
+  name: string,
+  url: string,
+  github_url: string
+  id: number,
+  avatar: string
+}
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+export default function useGithub (): [IGithub[], IProfile] {
+  const [profile, setProfile] = useState<IGithub[]>([{
+    name: '',
+    url: '',
+    github_url: '',
+    id: 0,
+    avatar: ''
+  }])
+  const [bio, setBio] = useState<IProfile>({
+    name: '',
+    url: ''
+  })
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+  async function Bio () {
+    const databio = await fetch(
+      'https://api.github.com/users/eletromaximus'
+    )
+      .then((message) => message.json()
+      )
+      .catch((erro) => {
+        throw new Error(erro)
+      })
 
-### `yarn test`
+    const { name, url }: IProfile = databio
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    setBio({ name, url })
+  }
 
-### `yarn build`
+  async function Data () {
+    const data = await fetch(
+      'https://api.github.com/users/eletromaximus/repos'
+    )
+      .then((message) => message.json()
+      )
+      .catch((erro) => {
+        throw new Error(erro)
+      })
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    if (data.length >= 2) {
+      const repos: IGithub[] = await data.map((repos: any) => {
+        return {
+          name: repos.name,
+          url: repos.html_url,
+          github_url: repos.owner.url,
+          id: repos.id,
+          avatar: repos.owner.avatar_url
+        }
+      })
+      setProfile(repos)
+    }
+  }
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  useEffect(() => {
+    Data()
+    Bio()
+  })
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  return [profile, bio]
+}
 
-### `yarn eject`
+~~~
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Com a estilização feita com styled-componentes, todo o código ficou contido em apenas 40 linha 
+na página principal:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+~~~ javascript 
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+/* eslint-disable camelcase */
+import Card from './components/Cards'
+import * as S from './ContainerStyler'
+import useGithub, { IGithub } from './Hooks/useGithub'
+/* */
+function App () {
+  const [profile, bio] = useGithub()
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+  return (
+    <S.Container>
+      <S.Bio>
+        {profile && <S.Profile>
+          <img
+            src={profile[0].avatar}
+            alt="image profile"
+          />
+          <div id="bio">
+            <p>Nome: {bio.name} </p>
+            <p> Github: {bio.url} </p>
+          </div>
+        </S.Profile>}
+      </S.Bio>
+      <S.Projetos>
+        <ul>
+          {
+            profile.map((repo: IGithub) => {
+              return (
+                <li key={repo.id}>
+                  <Card url={repo.url} name={repo.name} />
+                </li>
+              )
+            })
+          }
+        </ul>
+      </S.Projetos>
+    </S.Container>
+  )
+}
 
-## Learn More
+export default App
+~~~
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+O resultado será semelhante a este:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+![desafio](https://github.com/Eletromaximus/desafio-front-dio/blob/main/desafio.png)

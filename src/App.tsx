@@ -9,9 +9,9 @@ function App () {
   return (
     <S.Container>
       <S.Bio>
-        {profile && <S.Profile>
+        {bio && <S.Profile>
           <img
-            src={profile[0].avatar}
+            src={bio.avatar_url}
             alt="image profile"
           />
           <div id="bio">
